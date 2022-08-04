@@ -152,6 +152,76 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-asyns和await" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/08/04/asyns%E5%92%8Cawait/">asyns和await</a>
+    </h1>
+  
+
+        
+        <a href="/2022/08/04/asyns%E5%92%8Cawait/" class="archive-article-date">
+  	<time datetime="2022-08-04T14:44:02.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-04</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Promise回顾"><a href="#Promise回顾" class="headerlink" title="Promise回顾"></a>Promise回顾</h1><p>说起async和await之前，我要先谈一谈Promise，因为它们是提供了一种更简单的方式来处理基于异步 Promise 的代码。所以先搞清楚Promise都做了些什么很重要！！！在我的理解看来，Promise代码执行做了两件事情</p>
+<ol>
+<li>将Promise的状态从pending改变成以兑现或已拒绝状态</li>
+<li>返回resolve的参数作为Promise中value的值</li>
+</ol>
+<p>那么await的作用就是等待Promise完成这两件事，并且将Promise的value值作为await表达式的值，难道.then()函数不是得到relove中的参数，对它进行处理吗？await则直接得到这个参数（数据）并且返回，可以在这一步骤之后对这个数据做任何的处理，省略了.then().极其像同步函数的书写，我举一个例子就很清晰了</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//这里通过Fetch请求服务端数据并处理为例子</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这是我在rap上保存的json数据，我做b站静态页面时用到的json数据</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> url = <span class="string">&#x27;http://rap2api.taobao.org/app/mock/295709/vueAxios&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">getJson</span>(<span class="params">url</span>) &#123;</span><br><span class="line">    <span class="comment">// 这一步通过fetch获得一个Response的一个对象</span></span><br><span class="line">    <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="title function_">fetch</span>(url);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//通过这个对象中的json()方法获得json数据</span></span><br><span class="line">    <span class="keyword">const</span> json = <span class="keyword">await</span> response.<span class="title function_">json</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理json数据，写在await后面的代码就好像写在.then()中类似</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(json);</span><br><span class="line">    <span class="keyword">return</span> json;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//上面的async函数相当于返回 Promise.reslove(json), 异步函数总是返回一个Promise,下面的代码其实就和上面console.log(json)完全一致，所以await既容易理解，可读性也高</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> jsonPromise = <span class="title function_">getJson</span>(url);</span><br><span class="line">jsonPromise.<span class="title function_">then</span>(<span class="function"><span class="params">json</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(json);</span><br><span class="line">&#125;)；</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>将上面的代码完善一下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">let</span> url = <span class="string">&#x27;http://rap2api.taobao.org/app/mock/295709/vueAxios&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">getJson</span>(<span class="params">url</span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 这一步通过fetch获得一个Response的一个对象</span></span><br><span class="line">    <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="title function_">fetch</span>(url);</span><br><span class="line">    <span class="keyword">if</span>(!response.<span class="property">ok</span>) &#123;</span><br><span class="line">        <span class="comment">// 抛出错误</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">`HTTP 请求错误：<span class="subst">$&#123;response.status&#125;</span>`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//通过Response对象中的json()方法获得json数据</span></span><br><span class="line">    <span class="keyword">const</span> json = <span class="keyword">await</span> response.<span class="title function_">json</span>();</span><br><span class="line">    <span class="comment">// 处理json数据</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(json);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;无法访问json数据$&#123;error&#125;&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">getJson</span>(url);</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/08/04/asyns%E5%92%8Cawait/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Promise简单入门" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
