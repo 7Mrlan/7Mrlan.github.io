@@ -17,7 +17,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://aa34266aec88088c9e03.test.upcdn.net/apicloud/c55c49f578f4c307dfa3952c427770bd.png">
 <meta property="article:published_time" content="2022-08-04T14:44:02.000Z">
-<meta property="article:modified_time" content="2022-08-05T05:02:45.350Z">
+<meta property="article:modified_time" content="2022-08-05T05:51:43.614Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://aa34266aec88088c9e03.test.upcdn.net/apicloud/c55c49f578f4c307dfa3952c427770bd.png">
@@ -163,10 +163,10 @@
       
         <h1 id="asyns和await"><a href="#asyns和await" class="headerlink" title="asyns和await"></a>asyns和await</h1><h2 id="Promise回顾"><a href="#Promise回顾" class="headerlink" title="Promise回顾"></a>Promise回顾</h2><p>说起async和await之前，我要先谈一谈Promise，因为它们是提供了一种更简单的方式来处理基于异步 Promise 的代码。所以先搞清楚Promise都做了些什么很重要！！！在我的理解看来，Promise代码执行做了两件事情</p>
 <ol>
-<li>将Promise的状态从pending改变成以兑现或已拒绝状态</li>
-<li>返回resolve的参数作为Promise中value的值</li>
+<li><strong>将Promise的状态从pending改变成以兑现或已拒绝状态</strong></li>
+<li><strong>返回resolve的参数作为Promise中value的值</strong></li>
 </ol>
-<p>那么await的作用就是等待Promise完成这两件事，并且将Promise的value值作为await表达式的值，难道.then()函数不是得到relove中的参数，对它进行处理吗？await则直接得到这个参数（数据）并且返回，可以在这一步骤之后对这个数据做任何的处理，省略了.then().极其像同步函数的书写，我举一个例子就很清晰了<br><strong>作者注：紧跟await之后的代码可以看成在Promise的.then()中书写代码，这样去类比会让思路更加清晰</strong></p>
+<p><strong>那么await的作用就是等待Promise完成这两件事，并且将Promise的value值作为await表达式的值</strong>!难道.then()函数不是得到relove中的参数，对它进行处理吗？await则直接得到这个参数（数据）并且返回，可以在这一步骤之后对这个数据做任何的处理，省略了.then().极其像同步函数的书写，我举一个例子就很清晰了<br><strong>作者注：紧跟await之后的代码可以看成在Promise的.then()中书写代码，这样去类比会让思路更加清晰</strong></p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//这里通过Fetch请求服务端数据并处理为例子</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这是我在rap上保存的json数据，我做b站静态页面时用到的json数据</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> url = <span class="string">&#x27;http://rap2api.taobao.org/app/mock/295709/vueAxios&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">getJson</span>(<span class="params">url</span>) &#123;</span><br><span class="line">    <span class="comment">// 这一步通过fetch获得一个Response的一个对象</span></span><br><span class="line">    <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="title function_">fetch</span>(url);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//通过这个对象中的json()方法获得json数据</span></span><br><span class="line">    <span class="keyword">const</span> json = <span class="keyword">await</span> response.<span class="title function_">json</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理json数据，写在await后面的代码就好像写在.then()中类似</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(json);</span><br><span class="line">    <span class="keyword">return</span> json;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//上面的async函数相当于返回 Promise.reslove(json), 异步函数总是返回一个Promise,下面的代码其实就和上面console.log(json)完全一致，所以await既容易理解，可读性也高</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> jsonPromise = <span class="title function_">getJson</span>(url);</span><br><span class="line">jsonPromise.<span class="title function_">then</span>(<span class="function"><span class="params">json</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(json);</span><br><span class="line">&#125;)；</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>将上面的代码完善一下</p>
@@ -181,8 +181,9 @@
 <p><img src="http://aa34266aec88088c9e03.test.upcdn.net/apicloud/c55c49f578f4c307dfa3952c427770bd.png" alt="Response对象"><br>错误处理是非常中要的一环, 当fetch请求失败时。会抛出用throw指定的错误提示。它也能自动捕获其它类型的错误。关于try…catch的介绍可以看mdn的官方文档，它已经写的足够详细，我之后的博客中也会介绍。</p>
 <ol>
 <li>当await 之后的Promise对象返回value值即Response对象时，await表达式结束并将这个返回值作为await表达式的值赋给左式（在 const response &#x3D; await fetch(url);这个表达式，这个我所谓的返回值就是Response对象，具体可以看上面的截图），在这个过程中后面的代码都处于被<strong>阻塞状态，无法运行</strong>,当然，它阻塞的时async函数中它后面的代码。<strong>这也是为什么它只能用于异步函数async之中的原因。滥用await会导致非常恶劣的后果。</strong></li>
-<li>代码继续运行，response.json()也会返回一个Promise对象，await继续执行我上述那番操作，等待promise的状态改变并且拿到返回值value，赋值给左式。</li>
+<li>代码继续运行，response.json()也会返回一个Promise对象，await继续执行我上述那番操作，等待promise的状态改变并且拿到返回值value，赋值给左式。接下来你就可以处理你拿到的json数据了</li>
 </ol>
+<h2 id="说说async返回值的那些事"><a href="#说说async返回值的那些事" class="headerlink" title="说说async返回值的那些事"></a>说说async返回值的那些事</h2><p>async一定返回一个Promise，这是肯定的，你可以自己手动返回Promise对象，如果你rerurn的不是一个Promise对象，例如return 2;等同于rerurn Promise.reslove(2);当你没有设置返回值的时候会返回undefined这和.then的返回十分类似，可以去看看我在Promise简单入门中提到关于.then()返回值的问题</p>
 
       
 
@@ -305,7 +306,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#asyns%E5%92%8Cawait"><span class="toc-number">1.</span> <span class="toc-text">asyns和await</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Promise%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.1.</span> <span class="toc-text">Promise回顾</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E8%A7%A3%E8%AF%BB"><span class="toc-number">1.2.</span> <span class="toc-text">代码解读</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#asyns%E5%92%8Cawait"><span class="toc-number">1.</span> <span class="toc-text">asyns和await</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Promise%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.1.</span> <span class="toc-text">Promise回顾</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E8%A7%A3%E8%AF%BB"><span class="toc-number">1.2.</span> <span class="toc-text">代码解读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%B4%E8%AF%B4async%E8%BF%94%E5%9B%9E%E5%80%BC%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B"><span class="toc-number">1.3.</span> <span class="toc-text">说说async返回值的那些事</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
