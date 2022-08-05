@@ -16,7 +16,7 @@
 <meta property="og:description" content="为什么要用PromiseEs6引入的实现异步操作的新技术。避免回调地狱，支持链式调用。这里出现了两个名词，回调地狱以及链式调用，下面会先介绍这两个名词  回调地狱  传统的处理异步操作的方式是回调函数，异步操作和同步操作的很大区别就在于异步操作需要时间。比如通过XHR(XMLHttpRequest)或者FetchAPI向服务端请求数据，又或者是在JavaScript里面很常见的定时器操作，它们都不">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-08-04T02:52:46.000Z">
-<meta property="article:modified_time" content="2022-08-04T11:52:43.783Z">
+<meta property="article:modified_time" content="2022-08-05T03:32:11.555Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -210,13 +210,8 @@
 <p>当运行上面的代码时，你可以打开html文件加入&lt;script&gt;标签, 运行网页，这个时候你立即打开控制台，查看myPromise, 发现它处于pending状态，每隔一秒查看一次，第五秒时，其转变为fulfilled状态，此时在控制态执行一个你手写的.then()方法，例如：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">myPromise.<span class="title function_">then</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;小星向前冲！&#x27;</span>);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 <p>发现瞬间’小星向前冲’就被输出到控制台了，所以理清了先后关系我就可以下一个话题的</p>
-<ul>
-<li>.then()的返回值小小的深研究</li>
-</ul>
-<p>在第一点我说了，它默认返回一个value值为undefined的几乎等于同步完成的Promise对象，<code>相当于return Promise.resolve()</code>但我们可以通过return 自己手动的去返回一个值，以下几种情况</p>
+<h2 id="then-的返回值小小的深研究"><a href="#then-的返回值小小的深研究" class="headerlink" title=".then()的返回值小小的深研究"></a>.then()的返回值小小的深研究</h2><p>在第一点我说了，它默认返回一个value值为undefined的几乎等于同步完成的Promise对象，<code>相当于return Promise.resolve()</code>但我们可以通过return 自己手动的去返回一个值，以下几种情况</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//第一种情况，手动返回一个Promise</span></span><br><span class="line"><span class="comment">//创建一个Promise对象</span></span><br><span class="line"><span class="keyword">const</span> m = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 设置定时器，0.5秒结束</span></span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">resolve</span>();</span><br><span class="line">    &#125;,<span class="number">500</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">m.<span class="title function_">then</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;我喜欢吃蔬菜！（难过dog，写博客真的好累&#x27;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 设置定时器，0.5秒结束</span></span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">resolve</span>(<span class="string">&#x27;lwxx&#x27;</span>);</span><br><span class="line">    &#125;,<span class="number">500</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//这个时候会返回一个Promise对象，0.5s后状态从pending变为fulfilled状态，value值接收&#x27;lwxx&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//第二种情况</span></span><br><span class="line">m.<span class="title function_">then</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;我喜欢吃蔬菜！（难过dog，写博客真的好累&#x27;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">23</span>；</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//相当于return Promise.resolve(23);</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//第三种情况</span></span><br><span class="line">m.<span class="title function_">then</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;我喜欢吃蔬菜！（难过dog，写博客真的好累&#x27;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">undefined</span>；</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//相当于return Promise.resolve(undefined),它和默认返回的Promise基本一致，状态直接为fulfilled，有点像同步代码</span></span><br></pre></td></tr></table></figure>
-
-
 
 
 <h2 id="一些有意思的错误（持续更新，也可以给我评论你们在Promise中遇到的错误）"><a href="#一些有意思的错误（持续更新，也可以给我评论你们在Promise中遇到的错误）" class="headerlink" title="一些有意思的错误（持续更新，也可以给我评论你们在Promise中遇到的错误）"></a>一些有意思的错误（持续更新，也可以给我评论你们在Promise中遇到的错误）</h2><ol>
@@ -235,7 +230,7 @@
             <span class="tooltip-content">
               <span class="tooltip-text">
                 <span class="tooltip-inner">
-                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>感谢阅读支持<i class="icon icon-quo-right"></i></p>
                   <div class="reward-box">
                     
                     
@@ -319,7 +314,7 @@
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          asyns和await
+          (no title)
         
       </div>
     </a>
@@ -345,6 +340,19 @@
             </div>
         </div>
         
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8Promise"><span class="toc-number">1.</span> <span class="toc-text">为什么要用Promise</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#promise%E7%AE%80%E5%8D%95%E5%9F%BA%E7%A1%80"><span class="toc-number">2.</span> <span class="toc-text">promise简单基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9-then-%E6%96%B9%E6%B3%95%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9C%8B%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">对.then()方法的一些看法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#then-%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC%E5%B0%8F%E5%B0%8F%E7%9A%84%E6%B7%B1%E7%A0%94%E7%A9%B6"><span class="toc-number">4.</span> <span class="toc-text">.then()的返回值小小的深研究</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E9%94%99%E8%AF%AF%EF%BC%88%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%EF%BC%8C%E4%B9%9F%E5%8F%AF%E4%BB%A5%E7%BB%99%E6%88%91%E8%AF%84%E8%AE%BA%E4%BD%A0%E4%BB%AC%E5%9C%A8Promise%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E9%94%99%E8%AF%AF%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">一些有意思的错误（持续更新，也可以给我评论你们在Promise中遇到的错误）</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
         
     </div>
 </aside>
@@ -496,34 +504,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
 
     
     	<section class="tools-section tools-section-friends" q-show="friends">
-  		
-        <ul class="search-ul">
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
-            </li>
-          
-        </ul>
   		
     	</section>
     
