@@ -147,6 +147,106 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/08/VueCLI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="http://aa34266aec88088c9e03.test.upcdn.net/apicloud/259c17af8ae38b3fb8967d5137bfb8a4.jpg">
+      <meta itemprop="name" content="Mrlan">
+      <meta itemprop="description" content="一个喜欢打游戏看电影吃东西的程序员,希望大家喜欢我的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前端">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/08/VueCLI/" class="post-title-link" itemprop="url">VueCLI</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-08 16:25:54 / 修改时间：17:00:21" itemprop="dateCreated datePublished" datetime="2022-09-08T16:25:54+08:00">2022-09-08</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>前言: 前面学了很多关于webpack的配置, 它是一个模块化打包的框架.可以手动配置很多的loader和plugins来拓展它,使得可以打包css,less,img,.vue文件,但是如果每次项目都需要配置这些太过繁琐,所以脚手架出现了.</p>
+<h2 id="vuecli2"><a href="#vuecli2" class="headerlink" title="vuecli2"></a>vuecli2</h2><h3 id="cli干了写什么"><a href="#cli干了写什么" class="headerlink" title="cli干了写什么?"></a>cli干了写什么?</h3><ol>
+<li>帮助我们配置webpack和一大堆的loader,plugins,使得我们可以直接进行开发</li>
+</ol>
+<p>看看vuecli2的目录结构,</p>
+<ul>
+<li><p>build和config文件夹都是对webpack的配置</p>
+</li>
+<li><p>src是写代码的路径</p>
+</li>
+<li><p>static是静态文件,会原封不动的把我们放在里面的文件打包到dist文件夹,我们之前学习url-loader知道图片如果大于llimit会进行打包,而不会转化成base64编码格式,文件名字可以配置,但是一般会使用某种特变的方式防止重复命名,即哈希值</p>
+</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">        <span class="attr">test</span>: <span class="regexp">/\.(png|jpe?g|gif|svg)(\?.*)?$/</span>,</span><br><span class="line">        <span class="attr">loader</span>: <span class="string">&#x27;url-loader&#x27;</span>,</span><br><span class="line">        <span class="attr">options</span>: &#123;</span><br><span class="line">          <span class="attr">limit</span>: <span class="number">10000</span>,</span><br><span class="line">          <span class="attr">name</span>: utils.<span class="title function_">assetsPath</span>(<span class="string">&#x27;img/[name].[hash:7].[ext]&#x27;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br></pre></td></tr></table></figure>
+
+<p>但是只放在static目录下就不会更改文件名字</p>
+<ul>
+<li>node_modules就是我们使用npm安装的一些包文件,一般不允许你直接进行修改</li>
+<li>rc文件一般是run commond 运行终端的缩写</li>
+<li>如果你使用了eslint规范会非常头疼,可以去config的index.js下面进行关闭</li>
+<li>gitignore是忽略一些文件的上传,当使用git上传远程服务器的时候,比如.vscode是vscode编辑器自己生成的文件内容这些都不需要上传,还有node_moudle文件夹也不需要,用户可以使用npm install下载packge.json文件需要的依赖和插件</li>
+<li>packge.json一般是我们掌握目录结构的入口,和对npm run 启动项目的入口</li>
+</ul>
+<p>这些友好的目录结构,和及其庞大的配置都是脚手架帮我们完成的</p>
+<h2 id="vue-cli3"><a href="#vue-cli3" class="headerlink" title="vue-cli3"></a>vue-cli3</h2><p><strong>为什么我老是强调配置和目录结构,因为这就是脚手架做的事情,替我们完成的工作,我们需要了解这些,才能以后游刃有余的使用目录结构,并且替换我们需要的某些配置</strong></p>
+<p>它主张0配置,其实只是隐藏了配置,我们有三种方式查看配置</p>
+<ol>
+<li>使用vue ui命令进入图形化界面管理</li>
+<li>进入node_modules@vue文件中寻找配置文件,但是这种文件一般不允许你修改</li>
+<li>创建vue.config.js进行配置,当你使用npm run build的时候会自动的替换你的配置,和脚手架的配置进行合并</li>
+</ol>
+<h3 id="和vuecli2的区别"><a href="#和vuecli2的区别" class="headerlink" title="和vuecli2的区别"></a>和vuecli2的区别</h3><ol>
+<li>因为主张0配置,所以没有build和config配置文件<br>配置文件交由”@vue&#x2F;cli-service”: “~5.0.0”,进行管理</li>
+<li>原先的static文件夹变成了public文件夹</li>
+</ol>
+<h2 id="runtime-compiler和runtime-only的区别"><a href="#runtime-compiler和runtime-only的区别" class="headerlink" title="runtime-compiler和runtime-only的区别"></a>runtime-compiler和runtime-only的区别</h2><p>运行时编译是在运行的时候将template编译成render函数的,它有下面一系列的过程</p>
+<p>template  parse-&gt; ast(抽象语法树)  compiler-&gt; render() -&gt; vdom -&gt; ui -&gt; 网页</p>
+<p>这是使用runtime-compiler的过程,耗费空间,大概多6-10kb</p>
+<p>使用runtime-only即是在开发阶段,利用vue-template-compiler直接将.vue文件解析,使其变成render函数,这样在根组件,用render: h &#x3D;&gt; h(App)导入已经被解析过的组件即可,h 在这里的意思为hyperscript,其实整个过程如下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">render</span>: <span class="function"><span class="params">createElement</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="title function_">createElement</span>(<span class="string">&#x27;&#x27;</span>, &#123;&#125;, [<span class="title function_">createElement</span>(<span class="string">&#x27;&#x27;</span>, &#123;&#125;, [<span class="title function_">createElement</span>()])])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>createElement函数可以传普通的元素,也可以传入一个对象组件,当然这个组件必须已经被解析,不能含有template</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/14/Vue%E7%BB%84%E4%BB%B6%E5%8C%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -211,6 +311,106 @@
             </div>
           <!--/noindex-->
         
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/14/%E6%A8%A1%E5%9D%97%E5%8C%96%E5%BC%80%E5%8F%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="http://aa34266aec88088c9e03.test.upcdn.net/apicloud/259c17af8ae38b3fb8967d5137bfb8a4.jpg">
+      <meta itemprop="name" content="Mrlan">
+      <meta itemprop="description" content="一个喜欢打游戏看电影吃东西的程序员,希望大家喜欢我的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前端">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/14/%E6%A8%A1%E5%9D%97%E5%8C%96%E5%BC%80%E5%8F%91/" class="post-title-link" itemprop="url">模块化开发</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-14 16:38:37" itemprop="dateCreated datePublished" datetime="2022-08-14T16:38:37+08:00">2022-08-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-07 11:32:26" itemprop="dateModified" datetime="2022-09-07T11:32:26+08:00">2022-09-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/moudle/" itemprop="url" rel="index"><span itemprop="name">moudle</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="为什么要有模块化"><a href="#为什么要有模块化" class="headerlink" title="为什么要有模块化"></a>为什么要有模块化</h2><p>1.解决全局变量命名冲突<br> 因为script引入到html是在全局作用域里面运行的，这样就会导致很多人一起开发的同时，命名会发送冲突。</p>
+<p> 以往的解决办法是通过闭包来解决。但是这样会让你的代码片段很难在其它文件中得到复用。比如有一个js文件的功能是获取随机数的，别的js文件如果很多都需要用到这个功能并不方便引用，</p>
+<p> es5的解决办法是利用创建一个obj，将需要复用的内容包裹在这个对象里面，return出去，用一个全局变量接收，这样别的js文件又可以使用了。但是到了es6,出现了新的语法来支持这种导出和导入的方式export,和import<br>  由于它们的javascript文件类型必须是module类型，因为<strong>module类型的js文件，相当于给文件设置了私有作用域，每个js文件都是独立的模块上下文，在这个上下文中的所有变量都是私有的，对外不可见</strong></p>
+<p>2.module类型的js文件为什么会出现跨域问题？？因为普通的js文件Sec-Fetch-Mode是no-cors，是不受同源策略的影响的，所以很多时候，我们甚至会使用jsonp来请求数据，这是利用script标签不受同源策略影响，所以动态创建script标签，向服务器请求数据，服务器返回一个函数的执行，函数是你提前定义好的函数，只是在服务器将对象传进去，并且执行。</p>
+<h3 id="常见的模块化规范"><a href="#常见的模块化规范" class="headerlink" title="常见的模块化规范"></a>常见的模块化规范</h3><p>CommonJS ES6moudle CMD AMD</p>
+<h2 id="webpack为模块化开发提供了便利"><a href="#webpack为模块化开发提供了便利" class="headerlink" title="webpack为模块化开发提供了便利"></a>webpack为模块化开发提供了便利</h2><p>webpack是模块打包工具，你可以给它一个入口文件和出口文件，它会从入口文件开始，将需要的所有依赖都进行打包，打包之后的文件会放在出口文件中，所以你只需要在html中引入一个打包之后的出口文件即可。</p>
+<p>需要注意的几个点</p>
+<ol>
+<li>webpack可以进行配置webpack.config.js文件，提前设置好出口文件和入口文件，这样就不不会导致代码的转移之后导致文件不可用要重新去写出入口文件名。大概配置方式如下</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>)</span><br><span class="line"><span class="comment">//入口文件</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="attr">entry</span>: <span class="string">&#x27;./src/main.js&#x27;</span>,</span><br><span class="line">  <span class="attr">output</span>: &#123;</span><br><span class="line">    <span class="comment">// 动态的获取路径</span></span><br><span class="line">    <span class="attr">path</span>: path.<span class="title function_">resolve</span>(__dirname, <span class="string">&#x27;dist&#x27;</span>),</span><br><span class="line">    <span class="attr">filename</span>: <span class="string">&#x27;bundle.js&#x27;</span></span><br><span class="line">  &#125;, </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这条做当你执行webpack的命令时，他就会按照你提前设置好的入口和出口进行打包了。</p>
+<ol start="2">
+<li>webpack可以配置node环境的package.json包，我们知道当你使用npm包管理的时候，npm init会有你项目中需要用到的各种模块。webpack也在其中。我们的版本可能和其他创作者的版本不同，会导致一些问题，但是你配置了npm run命令，这个命令会去script对象里面寻找，执行某条命令，比如你设置下了</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">   <span class="string">&quot;test&quot;</span>: <span class="string">&quot;echo \&quot;Error: no test specified\&quot; &amp;&amp; exit 1&quot;</span>,</span><br><span class="line">   <span class="string">&quot;build&quot;</span>: <span class="string">&quot;webpack&quot;</span></span><br><span class="line"> &#125;,</span><br></pre></td></tr></table></figure>
+
+<p>这时候我使用npm run build命令就会自动执行webpack，而且当前的webpack是由包管理器帮你管理的，会先在本地的webpack进行查找使用，而不会使用全局的，当你的项目完成之后，你只需要将package.json包给他，使用npm install命名就可以下载你项目用到的所有模块</p>
+<ol start="3">
+<li>webpack还可以将css文件当成模块进行打包，如果你需要这样做，那就首先得在入口文件里导入css文件，这样webpack就会去试着解析打包它，但是很可惜，webpack本身不能对css文件进行打包，它缺少loader，，loader是一个加载器，如果你需要预处理css文件，并将其加载到html中，需要css-loader对css文件进行加载,和style-loader负责将样式添加到DOM中，并且在mudule.config.js中进行配置</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">module</span>: &#123;</span><br><span class="line">    <span class="attr">rules</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">test</span>: <span class="regexp">/\.css$/i</span>,</span><br><span class="line">        <span class="comment">// cssloader只负责将css文件进行加载</span></span><br><span class="line">        <span class="comment">// 使用多个loader时webpack是从右向左读的</span></span><br><span class="line">        <span class="attr">use</span>: [<span class="string">&quot;style-loader&quot;</span>,<span class="string">&quot;css-loader&quot;</span>],</span><br><span class="line">      &#125;,</span><br><span class="line">    ],</span><br><span class="line">  &#125;,</span><br></pre></td></tr></table></figure>
+
+<p>注意webpack文件解析loader是从右往左解析的，按照这种规则，不仅能对css文件模块化打包，还能对一些其他的文件，比如less，scss文件进行打包。但是依然需要下载对应的一些loader对这些文件进行解析，比如less需要先解析成css文件，所以css文件所需要的loader都需要用上，在use中配置好。</p>
+<ol start="4">
+<li>webpack可以打包图片文件，会根据rules里面的规则，匹配到图片文件，根据options的limit值，小于则使用base64进行编码，大于limit则使用file-loader进行打包，可以在options里面设置打包后图片的位置和名字信息</li>
+</ol>
+
       
     </div>
 
@@ -391,170 +591,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/04/asyns%E5%92%8Cawait/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="http://aa34266aec88088c9e03.test.upcdn.net/apicloud/259c17af8ae38b3fb8967d5137bfb8a4.jpg">
-      <meta itemprop="name" content="Mrlan">
-      <meta itemprop="description" content="一个喜欢打游戏看电影吃东西的程序员,希望大家喜欢我的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/04/asyns%E5%92%8Cawait/" class="post-title-link" itemprop="url">asyns和await</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-04 22:44:02" itemprop="dateCreated datePublished" datetime="2022-08-04T22:44:02+08:00">2022-08-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-06 10:01:03" itemprop="dateModified" datetime="2022-08-06T10:01:03+08:00">2022-08-06</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Promise回顾"><a href="#Promise回顾" class="headerlink" title="Promise回顾"></a>Promise回顾</h2><p>说起async和await之前，我要先谈一谈Promise，因为它们是提供了一种更简单的方式来处理基于异步 Promise 的代码。所以先搞清楚Promise都做了些什么很重要！！！在我的理解看来，Promise代码执行做了两件事情</p>
-<p><escape>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/04/asyns%E5%92%8Cawait/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/04/Promise%E7%AE%80%E5%8D%95%E5%85%A5%E9%97%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="http://aa34266aec88088c9e03.test.upcdn.net/apicloud/259c17af8ae38b3fb8967d5137bfb8a4.jpg">
-      <meta itemprop="name" content="Mrlan">
-      <meta itemprop="description" content="一个喜欢打游戏看电影吃东西的程序员,希望大家喜欢我的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/04/Promise%E7%AE%80%E5%8D%95%E5%85%A5%E9%97%A8/" class="post-title-link" itemprop="url">Promise</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-04 10:52:46" itemprop="dateCreated datePublished" datetime="2022-08-04T10:52:46+08:00">2022-08-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 11:31:53" itemprop="dateModified" datetime="2022-08-25T11:31:53+08:00">2022-08-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="为什么要用Promise"><a href="#为什么要用Promise" class="headerlink" title="为什么要用Promise"></a>为什么要用Promise</h2><p>Es6引入的实现异步操作的新技术。避免回调地狱，支持链式调用。这里出现了两个名词，<strong>回调地狱</strong>以及<strong>链式调用</strong>，下面会先介绍这两个名词</p>
-<p><escape>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/04/Promise%E7%AE%80%E5%8D%95%E5%85%A5%E9%97%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -626,12 +662,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span>
       </div>
   </nav>
